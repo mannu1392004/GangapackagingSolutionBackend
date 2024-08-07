@@ -11,7 +11,6 @@ class TwilioConfig {
    @Bean
    fun twilioInitializer(): TwilioInitializer{
        Twilio.init("AC396e1366bcfb397c0beddd5c4ed98e53","e1e458616e860e08617096b5be91f49c")
-
        return TwilioInitializer()
    }
 

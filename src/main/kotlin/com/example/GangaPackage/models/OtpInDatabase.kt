@@ -9,5 +9,5 @@ data class OtpInDatabase(
     val otp: Int,
     val time:LocalDateTime ,
     @Id
-    val mobile: Long
+    val mobile: String
 )

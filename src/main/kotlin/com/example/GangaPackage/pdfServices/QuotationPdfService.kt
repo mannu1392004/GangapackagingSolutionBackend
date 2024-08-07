@@ -321,85 +321,82 @@ class QuotationPdfService {
         document.close()
         return byteArrayOutputStream.toByteArray()
     }
-
-
-    fun drawStamp(name: String): BufferedImage {
-        // Create BufferedImage with dimensions
-        val width = 400
-        val height = 400
-        val image = BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB)
-        val g2d = image.createGraphics()
-
-
-        // Set rendering hints for better quality
-        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON)
-        g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON)
-
-
-        // Set background to white
-        g2d.color = Color.WHITE
-        g2d.fillRect(0, 0, width, height)
-
-
-        // Draw outer circle (thin)
-        g2d.color = Color(68, 68, 132)
-        g2d.stroke = BasicStroke(5f) // Set stroke width to 5 pixels
-        g2d.drawOval(70, 70, 250, 250)
-
-
-        // Draw inner circle
-        g2d.drawOval(80, 80, 230, 230)
-
-
-        // Rotate the graphics context
-        val orig: AffineTransform = g2d.transform
-        val at: AffineTransform = AffineTransform()
-        at.rotate(Math.toRadians(-30.0), width / 2.0, height / 2.0)
-        g2d.transform = at
-
-
-        // Draw rounded rectangle with black border
-        val rectX = 70
-        val rectY = 160
-        val rectWidth = 260
-        val rectHeight = 60
-        val arcWidth = 20
-        val arcHeight = 20
-        g2d.color = Color.WHITE
-        g2d.stroke = BasicStroke(5f) // Set stroke width for rectangle border
-        val roundedRectangle: RoundRectangle2D = RoundRectangle2D.Float(
-            rectX.toFloat(),
-            rectY.toFloat(),
-            rectWidth.toFloat(),
-            rectHeight.toFloat(),
-            arcWidth.toFloat(),
-            arcHeight.toFloat()
-        )
-        g2d.draw(roundedRectangle)
-        g2d.fill(roundedRectangle)
-        g2d.color = Color(68, 68, 132)
-
-        // Write name inside the rectangle
-        g2d.font = Font("Arial", Font.BOLD, 34)
-        g2d.color = Color.BLUE
-        val fm = g2d.fontMetrics
-        val textX = rectX + (rectWidth - fm.stringWidth(name)) / 2
-        val textY = rectY + ((rectHeight - fm.height) / 2) + fm.ascent
-        g2d.drawString(name, textX, textY)
-
-
-        // Reset the rotation
-        g2d.transform = orig
-
-        g2d.dispose()
-
-
-        // Convert BufferedImage to byte array
-        val baos = com.itextpdf.io.source.ByteArrayOutputStream()
-        ImageIO.write(image, "png", baos)
-
-        return image
-    }
 }
+fun drawStamp(name: String): BufferedImage {
+    // Create BufferedImage with dimensions
+    val width = 400
+    val height = 400
+    val image = BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB)
+    val g2d = image.createGraphics()
 
+
+    // Set rendering hints for better quality
+    g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON)
+    g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON)
+
+
+    // Set background to white
+    g2d.color = Color.WHITE
+    g2d.fillRect(0, 0, width, height)
+
+
+    // Draw outer circle (thin)
+    g2d.color = Color(68, 68, 132)
+    g2d.stroke = BasicStroke(5f) // Set stroke width to 5 pixels
+    g2d.drawOval(70, 70, 250, 250)
+
+
+    // Draw inner circle
+    g2d.drawOval(80, 80, 230, 230)
+
+
+    // Rotate the graphics context
+    val orig: AffineTransform = g2d.transform
+    val at: AffineTransform = AffineTransform()
+    at.rotate(Math.toRadians(-30.0), width / 2.0, height / 2.0)
+    g2d.transform = at
+
+
+    // Draw rounded rectangle with black border
+    val rectX = 70
+    val rectY = 160
+    val rectWidth = 260
+    val rectHeight = 60
+    val arcWidth = 20
+    val arcHeight = 20
+    g2d.color = Color.WHITE
+    g2d.stroke = BasicStroke(5f) // Set stroke width for rectangle border
+    val roundedRectangle: RoundRectangle2D = RoundRectangle2D.Float(
+        rectX.toFloat(),
+        rectY.toFloat(),
+        rectWidth.toFloat(),
+        rectHeight.toFloat(),
+        arcWidth.toFloat(),
+        arcHeight.toFloat()
+    )
+    g2d.draw(roundedRectangle)
+    g2d.fill(roundedRectangle)
+    g2d.color = Color(68, 68, 132)
+
+    // Write name inside the rectangle
+    g2d.font = Font("Arial", Font.BOLD, 34)
+    g2d.color = Color.BLUE
+    val fm = g2d.fontMetrics
+    val textX = rectX + (rectWidth - fm.stringWidth(name)) / 2
+    val textY = rectY + ((rectHeight - fm.height) / 2) + fm.ascent
+    g2d.drawString(name, textX, textY)
+
+
+    // Reset the rotation
+    g2d.transform = orig
+
+    g2d.dispose()
+
+
+    // Convert BufferedImage to byte array
+    val baos = com.itextpdf.io.source.ByteArrayOutputStream()
+    ImageIO.write(image, "png", baos)
+
+    return image
+}
 

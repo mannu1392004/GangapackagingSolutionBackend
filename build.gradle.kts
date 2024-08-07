@@ -34,13 +34,14 @@ dependencies {
 	runtimeOnly("io.jsonwebtoken:jjwt-jackson:0.11.5")
 	implementation("com.twilio.sdk:twilio:8.27.0")
 
-
 	implementation ("com.itextpdf:itext7-core:7.2.1")
 
 	implementation ("org.springframework.boot:spring-boot-starter-thymeleaf")
 	implementation("com.itextpdf:html2pdf:5.0.4")
 
 
+	// email
+	implementation ("org.springframework.boot:spring-boot-starter-mail")
 }
 
 tasks.withType<KotlinCompile> {

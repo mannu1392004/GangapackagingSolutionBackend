@@ -9,11 +9,13 @@ import com.itextpdf.layout.Document
 import com.itextpdf.layout.borders.Border
 import com.itextpdf.layout.borders.SolidBorder
 import com.itextpdf.layout.element.Cell
+import com.itextpdf.layout.element.Image
 import com.itextpdf.layout.element.Paragraph
 import com.itextpdf.layout.element.Table
 import com.itextpdf.layout.properties.TextAlignment
 import com.itextpdf.layout.properties.VerticalAlignment
 import java.io.ByteArrayOutputStream
+import javax.imageio.ImageIO
 
 fun BillGenerationPdfService(): ByteArray {
     val byteArrayOutputStream = ByteArrayOutputStream()
@@ -172,12 +174,45 @@ fun BillGenerationPdfService(): ByteArray {
 
 
 
+    // sign and term condition
+    val image = drawStamp("Mannu")
+    // Convert BufferedImage to byte array
+    val baos = ByteArrayOutputStream()
+    ImageIO.write(image, "png", baos)
+    val imageData = ImageDataFactory.create(baos.toByteArray())
+    val pdfimage = Image(imageData)
+    pdfimage.setHeight(150f)
+    pdfimage.setWidth(150f)
+
+    val stampText = "Stamp"
+    val fontSize = 10f
+
+
+    val stampParagraph = Paragraph(stampText)
+        .setFontColor(color)
+        .setFontSize(fontSize)
+        .setTextAlignment(TextAlignment.CENTER)
+
+    val stampCell = Cell().add(stampParagraph)
+    secondTable.addCell(pdfimage)
+
+    // agree cell
+    secondTable.addCell(
+        Paragraph("I Agree with Terms & Condition as Overleaf Signature Receiver's").setTextAlignment(
+            TextAlignment.LEFT
+        ).setVerticalAlignment(VerticalAlignment.MIDDLE).setFontSize(6f)
+    )
+
+
+
+
     leftTable.addCell(secondTable)
 
     table.addCell(leftTable)
 
 
-   // Right side of the table
+
+    // Right side of the table
 
     val paymentTable = Table(2)
         .useAllAvailableWidth()
@@ -255,9 +290,29 @@ fun BillGenerationPdfService(): ByteArray {
 
     val paragraph13 = Paragraph()
     paragraph13.add("Gst Paid By: Consignee \n")
-    paragraph13.add("")
+    paragraph13.add("Reverse Charge : No\n")
+    paragraph13.add("\n")
+    paragraph13.add("\n")
+    paragraph13.add("\n")
+    paragraph13.add("\n")
+    paragraph13.add("\n")
+    paragraph13.add("\n")
 
-    val span4 = Cell(1,2)
+    val span4 = Cell(1,2).add(paragraph13)
+    paymentTable.addCell(span4)
+
+    val paragraph14 = Paragraph()
+    paragraph14.add("Bank Details-\n").setBold().setFontColor(color)
+    paragraph14.add("Bank Name:\n")
+    paragraph14.add("Bank A/c No:\n")
+    paragraph14.add("IFSC Code:\n")
+    paragraph14.add("Other Payment Options:\n").setBold().setFontColor(color)
+    paragraph14.add("UPI Id:\n")
+
+val span5 = Cell(1, 2).add(paragraph14)
+    paymentTable.addCell(span5)
+
+
 
     table.addCell(Cell().add(paymentTable))
 
@@ -278,7 +333,7 @@ fun BillGenerationPdfService(): ByteArray {
         .setVerticalAlignment(com.itextpdf.layout.properties.VerticalAlignment.MIDDLE) // Align text vertically in the middle
         .setBorder(com.itextpdf.layout.borders.SolidBorder(1f)).setMargin(0f)
     querypara.add("For any Query Contact us:")
-    querypara.add(Paragraph("&015932229").setBold())
+    querypara.add(Paragraph("7015932229").setBold())
 
 
     document.add(querypara)

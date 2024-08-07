@@ -6,14 +6,16 @@ import com.twilio.type.PhoneNumber
 import org.springframework.data.annotation.Id
 import org.springframework.data.mongodb.core.mapping.Document
 import java.time.LocalDate
+import java.util.*
+
 
 @Document(collection = "quotations")
 data class Quotation(
     @Id
     val id: Int,
-    val status: String = "Pending",
-    val markAsPAid: Boolean = false,
-    val date: LocalDate,
+    var status: String = "Pending",
+    var markAsPAid: Boolean = false,
+    var date: String = "",
     var movingType: String = "",
     var companyName: String = "",
     var partyName: String = "",
@@ -69,7 +71,7 @@ data class Quotation(
     var octroiGreenTAx: String = "0",
 
     var subchargeType: String = charges.notApplicable,
-    var subcharges: String = "10",
+    var subcharges: String = "0",
 
     var gstIn: String = charges.inQuotation,
     var gst: String = "18",
@@ -96,9 +98,10 @@ data class Quotation(
 
     // additional  details
     var easyAccessForLoading: String = "Yes",
-    var shouldAnyItemGotDown:String = "N/A",
-    var areAnyRestrictionLoading:String = "N/A",
-    var doesAnySpecialNeedsOrConcerns:String = "N/A",
+    var shouldAnyItemGotDown: String = "N/A",
+    var areAnyRestrictionLoading: String = "N/A",
+    var doesAnySpecialNeedsOrConcerns: String = "N/A",
 
+    var total: String = "",
 
     )

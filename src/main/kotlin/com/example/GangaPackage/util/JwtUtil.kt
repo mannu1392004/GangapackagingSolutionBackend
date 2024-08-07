@@ -59,7 +59,6 @@ class JwtUtil(private val userServices: UserServices) {
         return Jwts.builder()
             .setClaims(claims)
             .setSubject(subject)
-            .setIssuedAt(Date(System.currentTimeMillis()))
             .signWith(key, SignatureAlgorithm.HS256)
             .compact()
     }
