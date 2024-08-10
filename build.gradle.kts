@@ -11,8 +11,6 @@ group = "com.example"
 version = "0.0.1-SNAPSHOT"
 
 java {
-	sourceCompatibility = JavaVersion.VERSION_21
-	targetCompatibility = JavaVersion.VERSION_21
 }
 
 repositories {
@@ -42,6 +40,7 @@ dependencies {
 
 	// email
 	implementation ("org.springframework.boot:spring-boot-starter-mail")
+	implementation(kotlin("stdlib-jdk8"))
 }
 
 tasks.withType<KotlinCompile> {
@@ -53,4 +52,7 @@ tasks.withType<KotlinCompile> {
 
 tasks.getByName<org.springframework.boot.gradle.tasks.bundling.BootJar>("bootJar") {
 	duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+}
+kotlin {
+	jvmToolchain(21)
 }

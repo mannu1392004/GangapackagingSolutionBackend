@@ -25,6 +25,9 @@ data class User(
     var packagingList: List<PackagingList>,
     var totalQuotation: Int,
     val mobileNumber:String,
+    var qrCode:String,
+    var signature:String,
+    var profile:String,
     //package List
     var totalPackagingList: Int,
 

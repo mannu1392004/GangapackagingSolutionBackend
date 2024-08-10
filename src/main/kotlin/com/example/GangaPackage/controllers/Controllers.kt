@@ -31,8 +31,31 @@ class Controllers(
     private val jwtUtil: JwtUtil,
 ) {
 
-    @Autowired
-    private lateinit var templateEngine: TemplateEngine
+    data class link(
+        val link: String
+    )
+
+    @PostMapping("/SendImage/{jwtToken}/{type}")
+    fun getImage(
+        @RequestBody link: String,
+        @PathVariable jwtToken: String,
+        @PathVariable type: String
+    ): String {
+        println("Working")
+        val userName = jwtUtil.extractUsername(jwtToken)
+        val user = userServices.findUserById(userName)
+        when (type) {
+            "qr" -> user.qrCode = link
+            "profile" -> user.profile = link
+            "sign" -> user.signature = link
+        }
+        userServices.save(user)
+
+        return "Done"
+    }
+
+
+
 
 
     // get quotation form
