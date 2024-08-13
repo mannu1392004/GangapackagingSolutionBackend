@@ -6,6 +6,7 @@ data class TotalSubTotal(
     val total: Double,
     val subTotal: Double,
     val gstcal: Double,
+    val insurancecharge : Double = 0.0
 )
 
 

@@ -1,5 +1,8 @@
 package com.example.GangaPackage.pdfServices
 
+import com.example.GangaPackage.calculations.BillCalculation
+import com.example.GangaPackage.models.User
+import com.example.GangaPackage.models.bill.Bill
 import com.itextpdf.io.image.ImageDataFactory
 import com.itextpdf.kernel.colors.DeviceRgb
 import com.itextpdf.kernel.geom.PageSize
@@ -7,7 +10,6 @@ import com.itextpdf.kernel.pdf.PdfDocument
 import com.itextpdf.kernel.pdf.PdfWriter
 import com.itextpdf.layout.Document
 import com.itextpdf.layout.borders.Border
-import com.itextpdf.layout.borders.SolidBorder
 import com.itextpdf.layout.element.Cell
 import com.itextpdf.layout.element.Image
 import com.itextpdf.layout.element.Paragraph
@@ -17,24 +19,25 @@ import com.itextpdf.layout.properties.VerticalAlignment
 import java.io.ByteArrayOutputStream
 import javax.imageio.ImageIO
 
-fun BillGenerationPdfService(): ByteArray {
+fun BillGenerationPdfService(bill: Bill, user: User): ByteArray {
     val byteArrayOutputStream = ByteArrayOutputStream()
     val writer = PdfWriter(byteArrayOutputStream)
     val pdfDocument = PdfDocument(writer)
     pdfDocument.defaultPageSize = PageSize.A3
     val document = Document(pdfDocument)
-    val color = DeviceRgb(0, 0, 255)
+    val color = DeviceRgb(17, 17, 32)
 
+    val total = BillCalculation(bill)
     // Header
     val header = Paragraph().setTextAlignment(TextAlignment.RIGHT) // Align text to the right
         .setVerticalAlignment(com.itextpdf.layout.properties.VerticalAlignment.MIDDLE) // Align text vertically in the middle
         .setBorder(com.itextpdf.layout.borders.SolidBorder(1f)).setPadding(10f).setMargin(0f)
     // Add elements to the header paragraph
     header.add(
-        Paragraph("Mahavir Truck").setFontSize(20f).setMargin(0f).setFontColor(DeviceRgb(0, 128, 0))
+        Paragraph(user.companyName).setFontSize(20f).setMargin(0f).setFontColor(color)
     )// Use \n for new line
-    header.add("\nEmail: mannu1392004@gmail.com\n").setFontSize(12f)
-    header.add("Contact: 7015932229").setFontSize(12f)
+    header.add("\nEmail: ${user.gmail}\n").setFontSize(12f)
+    header.add("Contact: ${user.mobileNumber}").setFontSize(12f)
 
     document.add(header)
 
@@ -59,21 +62,21 @@ fun BillGenerationPdfService(): ByteArray {
 
     val paragraph1 = Paragraph().apply {
         setMargin(0f)
-        add("Bill No: 1\n")
-        add("Billing Date: 12-06-2024\n")
-        add("Lr.No.: hr-24-244\n")
-        add("Delivery Date: 12-06-2024\n")
-        add("Vehicle No.: HR-20s-332\n")
+        add("Bill No: ${bill.billNumber}\n")
+        add("Billing Date: ${bill.invoiceDate}\n")
+        add("Lr.No.: ${bill.lrNumber}\n")
+        add("Delivery Date: ${bill.deliveryDate}\n")
+        add("Vehicle No.: ${bill.vehicleNumber}\n")
     }
     firstTable.addCell(paragraph1)
 
     val paragraph2 = Paragraph().apply {
         setMargin(2f)
-        add("Moving Path: By Road\n")
-        add("Moving Path Remark: By Road\n")
-        add("Type of Shipment: Household Goods\n")
-        add("From: Sonipat\n")
-        add("To: Noida\n")
+        add("Moving Path: ${bill.movingPath}\n")
+        add("Moving Path Remark: ${bill.movingPathRemark}\n")
+        add("Type of Shipment: ${bill.typeOfShipment}\n")
+        add("From: ${bill.moveFrom}\n")
+        add("To: ${bill.moveTo}\n")
     }
     firstTable.addCell(paragraph2)
 
@@ -91,13 +94,13 @@ fun BillGenerationPdfService(): ByteArray {
     )
 
     val paragraph3 = Paragraph()
-    paragraph3.add("Company Name :Shri Nath\n")
-    paragraph3.add("Name: Ramnath\n")
-    paragraph3.add("Phone: 7015932229\n")
-    paragraph3.add("Gst No.: \n")
-    paragraph3.add("Country: India\n")
-    paragraph3.add("Adress: Vikash colony sonipat\n")
-    paragraph3.add("City/State/PinCode: N/A/Haryana/131001\n")
+    paragraph3.add("Company Name : ${bill.companyName}\n")
+    paragraph3.add("Name: ${bill.citionsignorName}\n")
+    paragraph3.add("Phone: ${bill.citionsignorPhone}\n")
+    paragraph3.add("Gst No.: ${bill.citionsignorGstin}\n")
+    paragraph3.add("Country: ${bill.citionsignorCountry}\n")
+    paragraph3.add("Adress: ${bill.citionsignorAddress}\n")
+    paragraph3.add("City/State/PinCode: ${bill.citionsignorCity}/${bill.citionsignorState}/${bill.citionsignorPinCode}\n")
 
     leftTable.addCell(paragraph3)
 
@@ -113,56 +116,56 @@ fun BillGenerationPdfService(): ByteArray {
 
     val paragraph4 = Paragraph()
 
-    paragraph4.add("Name: Ramnath")
-    paragraph4.add("Phone: 7015932229\n")
-    paragraph4.add("Gst No.: \n")
-    paragraph4.add("Country: India\n")
-    paragraph4.add("Adress: Vikash colony sonipat\n")
-    paragraph4.add("City/State/PinCode: N/A/Haryana/131001\n")
+    paragraph4.add("Name: ${bill.consigneeName}")
+    paragraph4.add("Phone: ${bill.consigneePhone}\n")
+    paragraph4.add("Gst No.: ${bill.consigneeGstin}\n")
+    paragraph4.add("Country: ${bill.consigneeCountry}\n")
+    paragraph4.add("Adress: ${bill.consigneeAddress}\n")
+    paragraph4.add("City/State/PinCode: ${bill.consigneeCity}/${bill.consigneeState}/${bill.consigneePinCode}\n")
 
     secondTable.addCell(paragraph4)
 
     val paragraph5 = Paragraph()
 
-    paragraph5.add("Name: Mannu")
-    paragraph5.add("Phone: 7015932229\n")
-    paragraph5.add("Gst No.: \n")
-    paragraph5.add("Country: India\n")
-    paragraph5.add("Adress: Vikash colony sonipat\n")
-    paragraph5.add("City/State/PinCode: N/A/Haryana/131001\n")
+    paragraph5.add("Name: ${bill.citionsignorName}\n")
+    paragraph5.add("Phone: ${bill.citionsignorPhone}\n")
+    paragraph5.add("Gst No.: ${bill.citionsignorGstin}\n")
+    paragraph5.add("Country: ${bill.citionsignorCountry}\n")
+    paragraph5.add("Adress: ${bill.citionsignorAddress}\n")
+    paragraph5.add("City/State/PinCode: ${bill.citionsignorCity}/${bill.citionsignorState}/${bill.citionsignorPinCode}\n")
 
     secondTable.addCell(paragraph5)
 
 
     val paragraph6 = Paragraph()
-    paragraph6.add("Package: \n")
-    paragraph6.add("N/A")
+    paragraph6.add("Package Name : \n")
+    paragraph6.add("${bill.packageName}")
 
     secondTable.addCell(paragraph6)
 
     val paragraph7 = Paragraph()
     paragraph7.add("Packages and Goods Description: \n")
-    paragraph7.add("N/A")
+    paragraph7.add("${bill.description}")
     secondTable.addCell(paragraph7)
 
     val paragraph8 = Paragraph()
     paragraph8.add("Total Weight/Volume: \n")
-    paragraph8.add("N/A")
+    paragraph8.add("${bill.weight}")
     secondTable.addCell(paragraph8)
 
     val paragraph9 = Paragraph()
     paragraph9.add("Payment Remark: \n")
-    paragraph9.add("N/A")
+    paragraph9.add("${bill.paymentRemark}")
     secondTable.addCell(paragraph9)
 
     val paragraph10 = Paragraph()
     paragraph10.add("Remark: \n")
-    paragraph10.add("N/A")
+    paragraph10.add("${bill.remarks}")
     val span = Cell(1,2).add(paragraph10)
     secondTable.addCell(span)
 
     val paragraph11 = Paragraph()
-    paragraph11.add("Insurance charge @3% on declaration value of goods").setBold().setFontSize(8f)
+    paragraph11.add("Insurance charge @${bill.insuranceCharge} on declaration value of goods").setBold().setFontSize(8f)
     val span2 = Cell(1, 2).add(paragraph11)
     secondTable.addCell(span2)
 
@@ -233,23 +236,23 @@ fun BillGenerationPdfService(): ByteArray {
     )
 
     paymentTable.addCell("Freight")
-    paymentTable.addCell("2000")
+    paymentTable.addCell(bill.freightCharge)
     paymentTable.addCell("Packing Staff charge")
-    paymentTable.addCell("1000")
+    paymentTable.addCell(bill.packingCharge)
     paymentTable.addCell("Un Packing Staff Charge")
-    paymentTable.addCell("500")
+    paymentTable.addCell(bill.unpackingCharge)
     paymentTable.addCell("Loading Charge")
-    paymentTable.addCell("1000")
+    paymentTable.addCell(bill.loadingCharge)
     paymentTable.addCell("Un Loading Charge")
-    paymentTable.addCell("1000")
+    paymentTable.addCell(bill.unloadingCharge)
     paymentTable.addCell("Pack. Material Charge")
-    paymentTable.addCell("100")
+    paymentTable.addCell(bill.packingMaterialCharge)
     paymentTable.addCell("Other Charge")
-    paymentTable.addCell("200")
+    paymentTable.addCell(bill.otherCharge)
     paymentTable.addCell("S.T Charge")
-    paymentTable.addCell("100")
+    paymentTable.addCell(bill.stCharge)
     paymentTable.addCell("Discount")
-    paymentTable.addCell("600")
+    paymentTable.addCell(bill.discount)
 
     paymentTable.addCell(
         Cell().add(
@@ -259,19 +262,17 @@ fun BillGenerationPdfService(): ByteArray {
     )
     paymentTable.addCell(
         Cell().add(
-            Paragraph("1000").setPaddingRight(5f).setPaddingLeft(5f).setBackgroundColor(color)
+            Paragraph("${total.subTotal}").setPaddingRight(5f).setPaddingLeft(5f).setBackgroundColor(color)
                 .setFontColor(DeviceRgb(255, 255, 255))
         )
     )
 
-    paymentTable.addCell("SGST (9%)")
-    paymentTable.addCell("2108")
-    paymentTable.addCell("CGST (9%)")
-    paymentTable.addCell("2108")
+    paymentTable.addCell("GST ${bill.gst}")
+    paymentTable.addCell(total.gstcal.toString())
     paymentTable.addCell("Insurance Charge")
-    paymentTable.addCell("Optional")
+    paymentTable.addCell(bill.insuranceCharge)
     paymentTable.addCell("SubCharges")
-    paymentTable.addCell("2342")
+    paymentTable.addCell(bill.subcharge)
 
     paymentTable.addCell(
         Cell().add(
@@ -282,15 +283,15 @@ fun BillGenerationPdfService(): ByteArray {
     )
     paymentTable.addCell(
         Cell().add(
-            Paragraph("29983").setPaddingRight(5f).setPaddingLeft(5f)
+            Paragraph(bill.total).setPaddingRight(5f).setPaddingLeft(5f)
                 .setBackgroundColor(color)
                 .setFontColor(DeviceRgb(255, 255, 255))
         )
     )
 
     val paragraph13 = Paragraph()
-    paragraph13.add("Gst Paid By: Consignee \n")
-    paragraph13.add("Reverse Charge : No\n")
+    paragraph13.add("Gst Paid By: ${bill.gstpaidby} \n")
+    paragraph13.add("Reverse Charge : ${bill.reverseCharge}\n")
     paragraph13.add("\n")
     paragraph13.add("\n")
     paragraph13.add("\n")
@@ -303,11 +304,14 @@ fun BillGenerationPdfService(): ByteArray {
 
     val paragraph14 = Paragraph()
     paragraph14.add("Bank Details-\n").setBold().setFontColor(color)
-    paragraph14.add("Bank Name:\n")
-    paragraph14.add("Bank A/c No:\n")
-    paragraph14.add("IFSC Code:\n")
+    paragraph14.add("Bank A/c No: ${user.bankAccount}\n")
+    paragraph14.add("IFSC Code: ${user.ifscCode}\n")
     paragraph14.add("Other Payment Options:\n").setBold().setFontColor(color)
-    paragraph14.add("UPI Id:\n")
+    paragraph14.add("QrCode:\n")
+    if (user.qrCode.isNotEmpty()) {
+        paragraph14.add(imageDownload(user.qrCode))
+    }
+
 
 val span5 = Cell(1, 2).add(paragraph14)
     paymentTable.addCell(span5)

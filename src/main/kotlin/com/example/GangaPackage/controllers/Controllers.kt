@@ -5,24 +5,18 @@ import com.example.GangaPackage.calculations.QuotationCalculation
 import com.example.GangaPackage.calculations.lrBillsCalculation
 import com.example.GangaPackage.calculations.packageListCalc
 import com.example.GangaPackage.models.Quotation
-import com.example.GangaPackage.models.User
 import com.example.GangaPackage.models.bill.Bill
-import com.example.GangaPackage.models.bill.BillOtput
 import com.example.GangaPackage.models.lrbilty.LrBilty
 import com.example.GangaPackage.models.moneyReciept.MoneyReceipt
 import com.example.GangaPackage.models.packagingList.PackagingList
-import com.example.GangaPackage.models.quotation.QuotationOutput
 import com.example.GangaPackage.pdfServices.*
 import com.example.GangaPackage.services.UserServices
 import com.example.GangaPackage.util.JwtUtil
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
-import org.thymeleaf.TemplateEngine
 import java.time.LocalDate
-import java.util.UUID
 
 
 @RestController
@@ -388,13 +382,25 @@ val cal = BillCalculation(bill)
     }
 
 
+    @GetMapping("billPdf/{id}/{jwtToken}")
+    fun billPdf(@PathVariable jwtToken: String,@PathVariable id: String): ResponseEntity<ByteArray> {
+        println("Sending Pdfs")
+        val userName = jwtUtil.extractUsername(jwtToken)
+        val user = userServices.findUserById(userName)
+        val bill = user.bill.filter { it.id == id }
 
+        val pdfBytes = BillGenerationPdfService(bill[0],user)
+        val headers = HttpHeaders().apply {
+            add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=test.pdf")
+            add(HttpHeaders.CONTENT_TYPE, "application/pdf")
+        }
+        return ResponseEntity(pdfBytes, headers, HttpStatus.OK)
+    }
 
 
 // test pdf
-
     @GetMapping("/testPackingList")
-    fun testPdf(): ResponseEntity<ByteArray> {
+    fun testPd(): ResponseEntity<ByteArray> {
         val pdfBytes = packingListPdf()
         val headers = HttpHeaders().apply {
             add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=test.pdf")
@@ -404,11 +410,14 @@ val cal = BillCalculation(bill)
     }
 
 
+
+
     // test money receipt
 
     @GetMapping("/testMoneyReceipt")
     fun testMoneyReceipt(): ResponseEntity<ByteArray> {
-        val pdfBytes = moneyReceiptPdf()
+        val  user = userServices.findUserById("mannu1392004@gmail.com")
+        val pdfBytes = moneyReceiptPdf(user)
         val headers = HttpHeaders().apply {
             add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=test.pdf")
             add(HttpHeaders.CONTENT_TYPE, "application/pdf")
@@ -420,11 +429,16 @@ val cal = BillCalculation(bill)
     // test lr bills
 
 
-    @GetMapping("/testLrBill")
-    fun testLrBill(): ResponseEntity<ByteArray> {
-        val pdfBytes = lrBillPdf()
+    @GetMapping("/LrBill/{id}/{jwtToken}")
+    fun lrBillPdf(@PathVariable jwtToken: String,@PathVariable id: String): ResponseEntity<ByteArray> {
+
+      println("Sending Pdfs")
+        val userName = jwtUtil.extractUsername(jwtToken)
+        val user = userServices.findUserById(userName)
+        val lrbill = user.lrBills.filter { it.id ==id.toInt() }
+        val pdfBytes = lrBillPdf(user,lrbill[0])
         val headers = HttpHeaders().apply {
-            add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=test.pdf")
+            add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=${"Lr Number_"+lrbill[0].lrNumber}.pdf")
             add(HttpHeaders.CONTENT_TYPE, "application/pdf")
         }
         return ResponseEntity(pdfBytes, headers, HttpStatus.OK)

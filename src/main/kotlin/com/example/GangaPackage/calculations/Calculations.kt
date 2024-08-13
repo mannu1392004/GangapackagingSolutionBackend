@@ -184,18 +184,21 @@ fun BillCalculation(bill: Bill): TotalSubTotal {
     subTotal =
         freightCharge + packingCharge + otherCharge + unpackingCharge + loadingCharge + unloadingCharge + packageingMAterialCharge + storagecharge + carbikeTpt + miscleneousCharge + stCharge + octroiGreenTAx
 
-    total =
-        (gstperc / 100 * subTotal) + subTotal + vehicleInsuranceCharge + ((vehicleInsuranceGst / 100) * vehicleInsuranceCharge)
-    total -= discount
 
-    return (
-            TotalSubTotal(
+    val gstPerc = gstperc / 100 * subTotal
+
+    val insCharge =  insuranceCharge + ((insuranceGst / 100)*insuranceCharge)
+    total =
+        (gstPerc) + subTotal + vehicleInsuranceCharge + ((vehicleInsuranceGst / 100) * vehicleInsuranceCharge)
+    total -= discount+ insCharge -advancePaid
+
+    return (TotalSubTotal(
                 total,
                 subTotal,
-                0.0
+                gstPerc,
+        insurancecharge =insCharge
+        )
             )
-            )
-
 }
 
 
